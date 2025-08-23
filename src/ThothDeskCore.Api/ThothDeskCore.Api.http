@@ -1,0 +1,6 @@
+@ThothDeskCore.Api_HostAddress = http://localhost:5128
+
+GET {{ThothDeskCore.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
