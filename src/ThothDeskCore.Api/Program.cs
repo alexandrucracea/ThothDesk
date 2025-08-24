@@ -1,5 +1,9 @@
-using ThothDeskCore.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using ThothDeskCore.Api.DTOs;
+using ThothDeskCore.Api.Extensions;
+using ThothDeskCore.Api.Services;
+using ThothDeskCore.Api.Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,10 +12,32 @@ if (string.IsNullOrWhiteSpace(connStr))
     throw new InvalidOperationException("Connection string 'SqlServer' not found.");
 
 // Add services to the container.
-builder.Services.AddDbContext<AppDbContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+builder.Services
+    .AddDataBase(builder.Configuration)
+    .AddIdentityAndJwt(builder.Configuration);
+
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+//TODO automate api versioning
+//builder.Services.AddApiVersioning(options =>
+//{
+//    options.AssumeDefaultVersionWhenUnspecified = true;
+//    options.DefaultApiVersion = new(1, 0);
+//    options.ReportApiVersions = true;
+//});
+
+//builder.Services.AddVersionedApiExplorer(options =>
+//{
+//    options.GroupNameFormat = "'v'VVV";
+//    options.SubstituteApiVersionInUrl = true;
+//});
+
+//var apiPrefix = builder.Configuration["Api:Prefix"] ?? "thothdesk";
 
 builder.Services.AddControllers();
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateAssignmentRequestValidator>();
+builder.Services.AddFluentValidationAutoValidation();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

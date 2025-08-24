@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ThothDeskCore.Api.DTOs;
 using ThothDeskCore.Domain;
 using ThothDeskCore.Infrastructure;
 
@@ -9,7 +10,6 @@ namespace ThothDeskCore.Api.Controllers;
 [Route("api/thothdesk/v1/[controller]")]
 public class CoursesController(AppDbContext db) : ControllerBase
 {
-    public record CreateCourseRequest(string Code, string Name, string Semester, int Credits);
 
     [HttpGet]
     public async Task<IActionResult> List([FromQuery] string? semester, int page = 1, int pageSize = 200)
@@ -31,7 +31,7 @@ public class CoursesController(AppDbContext db) : ControllerBase
         => await db.Courses.FindAsync(id) is { } c ? Ok(c) : NotFound();
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateCourseRequest request)
+    public async Task<IActionResult> Create(CourseRequest request)
     {
         var course = new Course(request.Code, request.Name, request.Semester, request.Credits);
 
@@ -42,7 +42,7 @@ public class CoursesController(AppDbContext db) : ControllerBase
     }
 
     [HttpPatch]
-    public async Task<IActionResult> Update(Guid id, CreateCourseRequest request)
+    public async Task<IActionResult> Update(Guid id, CourseRequest request)
     {
         var course = await db.Courses.FindAsync(id);
         if (course is null)

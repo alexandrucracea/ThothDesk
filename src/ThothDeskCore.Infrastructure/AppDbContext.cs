@@ -1,16 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ThothDeskCore.Domain;
 
 namespace ThothDeskCore.Infrastructure;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<ApplicationUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<Course> Courses => Set<Course>();
+    public DbSet<Assignment> Assignments => Set<Assignment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
+
         modelBuilder.Entity<Course>(entity =>
         {
             entity.HasKey(x => x.Id);
@@ -18,6 +23,20 @@ public class AppDbContext : DbContext
             entity.Property(x=>x.Name).IsRequired().HasMaxLength(200);
             entity.Property(x => x.Semester).IsRequired().HasMaxLength(20);
             entity.HasIndex(x => x.Code).IsUnique();
+        });
+
+        modelBuilder.Entity<Assignment>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Title).IsRequired().HasMaxLength(256);
+            entity.Property(x => x.Description).HasMaxLength(2048);
+            entity.Property(x => x.MaxPoints).IsRequired();
+            entity.HasOne<Course>()
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasIndex(x => new { x.CourseId, x.DueAt });
+
         });
     }
 }
