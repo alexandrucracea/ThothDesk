@@ -3,7 +3,9 @@ using FluentValidation.AspNetCore;
 using ThothDeskCore.Api.DTOs;
 using ThothDeskCore.Api.Extensions;
 using ThothDeskCore.Api.Services;
+using ThothDeskCore.Api.Services.Interfaces;
 using ThothDeskCore.Api.Validation;
+using ThothDeskCore.Infrastructure.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,9 @@ builder.Services
     .AddIdentityAndJwt(builder.Configuration);
 
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+//builder.Services.AddScoped<IAssignmentService, AssignmentService>();
+
 
 //TODO automate api versioning
 //builder.Services.AddApiVersioning(options =>
@@ -44,7 +49,10 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHealthChecks().AddSqlServer(connStr);
 
+
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

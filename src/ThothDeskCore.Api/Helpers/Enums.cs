@@ -9,7 +9,7 @@ namespace ThothDeskCore.Api.Helpers
         /// <b>1xx: Informational Responses</b>
         /// <b>2xx: Success Codes</b>
         /// <b>3xx: Redirection codes</b>
-        /// <b>4xx: Ckient Error Codes</b>
+        /// <b>4xx: Client Error Codes</b>
         /// <b>5xx: Server Error Codes</b>
         /// </summary>
         public enum HttpCodes
@@ -27,10 +27,6 @@ namespace ThothDeskCore.Api.Helpers
             RESET_CONTENT = 205,
 
             NOT_FOUD = 404,
-
-
-
-
         }
     }
 }
