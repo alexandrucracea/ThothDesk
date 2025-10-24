@@ -28,5 +28,11 @@ namespace ThothDeskCore.Api.Helpers
 
             NOT_FOUD = 404,
         }
+
+        public enum CourseRoles
+        {
+            STUDENT,
+            TEACHER
+        }
     }
 }

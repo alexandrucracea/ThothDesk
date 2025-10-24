@@ -9,7 +9,9 @@ public class Assignment
 
     public Guid CourseId { get; private set; }
 
-    public string Title { get; private set; } = default!;
+    public Course Course { get; private set; } = default!;
+
+    public string Title { get; private set; }
 
     public string? Description { get; private set; }
 

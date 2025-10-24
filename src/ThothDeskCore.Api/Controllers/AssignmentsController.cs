@@ -1,12 +1,8 @@
-﻿using FluentValidation.Results;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ThothDeskCore.Api.DTOs;
 using ThothDeskCore.Api.Extensions;
 using ThothDeskCore.Api.Services.Interfaces;
-using ThothDeskCore.Api.Validation;
-using ThothDeskCore.Domain;
 using ThothDeskCore.Infrastructure;
 
 namespace ThothDeskCore.Api.Controllers;
