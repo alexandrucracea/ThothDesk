@@ -1,6 +1,5 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using ThothDeskCore.Api.DTOs;
 using ThothDeskCore.Api.Extensions;
 using ThothDeskCore.Api.Services;
 using ThothDeskCore.Api.Services.Interfaces;
@@ -20,6 +19,7 @@ builder.Services
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 //builder.Services.AddScoped<IAssignmentService, AssignmentService>();
 
 

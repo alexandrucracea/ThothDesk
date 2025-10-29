@@ -28,9 +28,8 @@ public class AssignmentsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(AssignmentResponse),StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(AssignmentResponse),StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(AssignmentResponse),StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(AssignmentResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
         var assignment = await _assignmentService.GetByIdAsync(id, cancellationToken);

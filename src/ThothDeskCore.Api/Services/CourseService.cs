@@ -57,8 +57,9 @@ public class CourseService : ICourseService
                     .ToList(),
                 c.Enrollments
                     .Select(e => new EnrollmentResponse(e.Id,
-                                                                  e.RoleInCourse,
-                                                                  e.UserId))
+                                                                  e.CourseId,
+                                                                  e.UserId,
+                                                                  e.RoleInCourse))
                     .ToList()
                 ))
             .ToListAsync(ct);
@@ -107,8 +108,9 @@ public class CourseService : ICourseService
                     .ToList(),
                 c.Enrollments
                     .Select(e => new EnrollmentResponse(e.Id,
-                        e.RoleInCourse,
-                        e.UserId))
+                        e.CourseId,
+                        e.UserId,
+                        e.RoleInCourse))
                     .ToList()))
             .FirstOrDefaultAsync(ct);
     }
@@ -123,25 +125,13 @@ public class CourseService : ICourseService
             throw new InvalidOperationException("A course with the same Code and Semester already exists.");
         }
 
-        var courseToCreate = Course.Create(request.Code, request.Name, request.Semester, request.Credits); //wanted to try, but too many layers and i am not using DDD approach
+        var courseToCreate = Course.Create(request.Code, request.Name, request.Semester, request.Credits); 
+
         _dbContext.Courses.Add(courseToCreate);
         await _dbContext.SaveChangesAsync(ct);
 
         return courseToCreate.Id;
 
-        //easier way
-        //var course = new Course
-        //{
-        //    Code = request.Code.Trim().ToUpperInvariant(),
-        //    Name = request.Name.Trim(),
-        //    Semester = request.Semester.Trim(),
-        //    Credits = request.Credits,
-        //    CreatedAt = DateTimeOffset.UtcNow
-        //};
-
-        //_dbContext.Courses.Add(course);
-        //await _dbContext.SaveChangesAsync(ct);
-        //return course.Id;
     }
 
 

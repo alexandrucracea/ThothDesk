@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ThothDeskCore.Api.DTOs;
 using ThothDeskCore.Api.Services.Interfaces;
-using ThothDeskCore.Domain;
 using ThothDeskCore.Infrastructure;
 
 namespace ThothDeskCore.Api.Controllers;
@@ -20,19 +18,19 @@ public class CoursesController : ControllerBase
         _courseService = courseService;
     }
 
+    //TODO getAllCourses by Semester => develop a new feature in the service and implement in the controller
+    //TODO search for steps in configuring the setup for this project to document it
     [HttpGet]
     public async Task<IActionResult> List([FromQuery] string? semester, int page = 1, int pageSize = 200)
     {
-        var query = _db.Courses.AsNoTracking(); //TODO to search and document what this does
+        var allCourses = await _courseService.GetAllAsync();
 
-        if (!string.IsNullOrWhiteSpace(semester))
-        {
-            query = query.Where(c => c.Semester == semester);
-        }
+        var coursesToShow = allCourses.OrderBy(c => c.CreatedAt).
+                                                        Skip((page - 1) * pageSize).
+                                                        Take(pageSize).ToList();
 
-        var items = await query.OrderBy(c => c.CreatedAt).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+        return Ok(new { page, pageSize, coursesToShow });
 
-        return Ok(items);
     }
 
     [HttpGet("{id:guid}")]
@@ -42,7 +40,7 @@ public class CoursesController : ControllerBase
 
         if (course == null)
         {
-            return NotFound(new { message = $"Course with id {id} was not found." }); 
+            return NotFound(new { message = $"Course with id {id} was not found." });
         }
 
         return Ok(course);
@@ -51,47 +49,36 @@ public class CoursesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CourseRequest request)
     {
-        var course = new Course(request.Code, request.Name, request.Semester, request.Credits);
+        var courseToAdd = new CourseRequest(request.Code, request.Name, request.Semester, request.Credits);
 
-        _db.Courses.Add(course);
-        await _db.SaveChangesAsync();
+        await _courseService.CreateAsync(courseToAdd);
 
-        return CreatedAtAction(nameof(Get), new { id = course.Id }, course);
+        return CreatedAtAction(nameof(Get), courseToAdd);
     }
 
-    [HttpPatch]
-    public async Task<IActionResult> Update(Guid id, CourseRequest request)
+    [HttpPatch("{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCourseRequest request, CancellationToken ct)
     {
-        var course = await _db.Courses.FindAsync(id);
-        if (course is null)
+        var isUpdated = await _courseService.UpdateAsync(id, request, ct);
+
+        if (!isUpdated)
         {
             return NotFound();
         }
 
-        _db.Entry(course).CurrentValues.SetValues(new
-        {
-            course.Id,
-            request.Code,
-            request.Semester,
-            request.Credits
-        });
-
-        await _db.SaveChangesAsync();
         return NoContent();
     }
+
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var course = await _db.Courses.FindAsync(id);
+        var isDeleted = await _courseService.DeleteAsync(id);
 
-        if (course is null)
+        if (!isDeleted)
         {
             return NotFound();
         }
-
-        _db.Courses.Remove(course);
-        await _db.SaveChangesAsync();
 
         return NoContent();
     }

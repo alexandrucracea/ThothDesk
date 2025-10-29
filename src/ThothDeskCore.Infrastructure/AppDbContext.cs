@@ -55,7 +55,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<Enrollment>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.RoleInCourse).IsRequired();
+            entity.Property(x => x.RoleInCourse)
+                .IsRequired()
+                .HasMaxLength(64);
             entity.HasOne(e => e.Course)
                   .WithMany(c => c.Enrollments)
                   .HasForeignKey(e => e.CourseId)
