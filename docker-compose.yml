@@ -1,14 +1,15 @@
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: thothdeskcore-sql
+  Db:
+    image: postgres:16
+    container_name: thothdeskcore-postgreSQL
     environment: 
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD: "PaRoLa123#"
+      POSTGRES_USER: sa
+      POSTGRES_PASSWORD: PaRoLa123#
+      POSTGRES_DB: appdb
     ports: 
-      - "14333:1433"
+      - "5432:5432"
     volumes:
-      - sql_data:/var/opt/mssql
+      - pg_data:/var/lib/postgresql/data
 
 volumes:
-  sql_data:
+  pg_data:

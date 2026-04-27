@@ -8,9 +8,9 @@ using ThothDeskCore.Infrastructure.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connStr = builder.Configuration.GetConnectionString("SqlServer");
+var connStr = builder.Configuration.GetConnectionString("Postgres");
 if (string.IsNullOrWhiteSpace(connStr))
-    throw new InvalidOperationException("Connection string 'SqlServer' not found.");
+    throw new InvalidOperationException("Connection string 'Postgres' not found.");
 
 // Add services to the container.
 builder.Services

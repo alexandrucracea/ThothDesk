@@ -1,7 +1,4 @@
-﻿
-using System.Security.Cryptography;
-
-namespace ThothDeskCore.Domain;
+﻿namespace ThothDeskCore.Domain;
 
 public class Assignment
 {

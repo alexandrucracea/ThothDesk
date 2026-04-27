@@ -6,11 +6,14 @@ namespace ThothDeskCore.Infrastructure;
 
 public class AppDbContext : IdentityDbContext<ApplicationUser>
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    {
+    }
 
     public DbSet<Course> Courses => Set<Course>();
     public DbSet<Assignment> Assignments => Set<Assignment>();
     public DbSet<Enrollment> Enrollments => Set<Enrollment>();
+    public DbSet<Submission> Submissions => Set<Submission>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,12 +46,11 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(x => x.Description).HasMaxLength(2048);
             entity.Property(x => x.MaxPoints).IsRequired();
             entity.HasOne(a => a.Course)
-                  .WithMany(c => c.Assignments)
-                  .HasForeignKey(a => a.CourseId)
-                  .IsRequired()
-                  .OnDelete(DeleteBehavior.Cascade);
+                .WithMany(c => c.Assignments)
+                .HasForeignKey(a => a.CourseId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
             entity.HasIndex(x => new { x.CourseId, x.DueAt });
-
         });
 
 
@@ -59,11 +61,22 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
                 .IsRequired()
                 .HasMaxLength(64);
             entity.HasOne(e => e.Course)
-                  .WithMany(c => c.Enrollments)
-                  .HasForeignKey(e => e.CourseId)
-                  .OnDelete(DeleteBehavior.Cascade);
+                .WithMany(c => c.Enrollments)
+                .HasForeignKey(e => e.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
             entity.HasIndex(x => new { x.CourseId, x.UserId });
+        });
+
+        modelBuilder.Entity<Submission>(entity =>
+        {
+            entity.HasKey(submission => submission.Id);
+            entity.Property(submission => submission.AssignmentId).IsRequired();
+            entity.Property(submission => submission.StudentId).IsRequired();
+            entity.Property(submission => submission.AttemptNo).IsRequired();
+            entity.Property(submission => submission.Status).IsRequired();
+            entity.Property(submission => submission.PayloadUrlOrText).IsRequired();
+            //todo how do we represent the relations in here
+            entity.HasIndex(submission => new { submission.Id, submission.StudentId, submission.AssignmentId, });
         });
     }
 }
-

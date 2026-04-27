@@ -11,10 +11,10 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDataBase(this IServiceCollection services, IConfiguration config)
     {
-        var connectionString = config.GetConnectionString("SqlServer") ??
-                               throw new InvalidOperationException("Missing connection string 'SqlServer'");
+        var connectionString = config.GetConnectionString("Postgres") ??
+                               throw new InvalidOperationException("Missing connection string 'Postgres'");
 
-        services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+        services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
         return services;
     }

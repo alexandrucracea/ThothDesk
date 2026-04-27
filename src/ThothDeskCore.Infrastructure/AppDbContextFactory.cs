@@ -39,12 +39,12 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
             .Build();
 
         // IMPORTANT: cheia trebuie să fie EXACT ca în appsettings (la tine e "SqlServer")
-        var connStr = cfg.GetConnectionString("SqlServer");
+        var connStr = cfg.GetConnectionString("Postgres");
         if (string.IsNullOrWhiteSpace(connStr))
-            throw new InvalidOperationException("Connection string 'SqlServer' nu a fost găsit în config.");
+            throw new InvalidOperationException("Connection string 'Postgres' nu a fost găsit în config.");
 
         var opts = new DbContextOptionsBuilder<AppDbContext>()
-            .UseSqlServer(connStr)
+            .UseNpgsql(connStr)
             .Options;
 
         return new AppDbContext(opts);
